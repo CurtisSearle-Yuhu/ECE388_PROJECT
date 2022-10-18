@@ -1,16 +1,15 @@
 // This header file is used to initialize the DHT11
 
+
 #define DHT11_PIN 0 // "0" must match your pin	PORT# (i.e "0" = PORTB0)
-uint8_t c=0,Integer_Humidity,Decimal_Humidity,Integer_Temp,Decimal_Temp,CheckSum;
+uint8_t c=0,I_RH,D_RH,I_Temp,D_Temp,CheckSum;
 
 void Request()				// Microcontroller send start pulse/request
 {
 	DDRD |= (1<<DHT11_PIN);
-	PORTD |= (1<<DHT11_PIN); // MAYBE CAN DELETE
-	_delay_ms(100); // MAYBE CAN DELETE
-	PORTD &= ~(1<<DHT11_PIN);	//set to low pin
-	_delay_ms(20);			// wait for 20ms // this is not accurate for precision i need to change this
-	PORTD |= (1<<DHT11_PIN);	//set to high pin
+	PORTD &= ~(1<<DHT11_PIN);	/* set to low pin */
+	_delay_ms(20);			/* wait for 20ms */
+	PORTD |= (1<<DHT11_PIN);	/* set to high pin */
 }
 
 void Response()				// receive response from DHT11
@@ -26,11 +25,11 @@ uint8_t Receive_data()			// receive data
 	for (int q=0; q<8; q++)
 	{
 		while((PIND & (1<<DHT11_PIN)) == 0);  // check received bit 0 or 1
-		_delay_us(30); // this is not accurate for precision i need to change this
+		_delay_us(30);
 		if(PIND & (1<<DHT11_PIN))// if high pulse is greater than 30ms 
 		c = (c<<1)|(0x01);	// then its logic HIGH
 		else			// otherwise its logic LOW
-		c = (c<<1); // stole the c concept from online
+		c = (c<<1);
 		while(PIND & (1<<DHT11_PIN));
 	}
 	return c;
