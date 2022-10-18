@@ -1,4 +1,32 @@
-// MAIN FUNCTION
+/*
+PORTD
+DHT11
+PD0 -----	DATA
+GND ------	GND
+VCC	------	5V
+
+PORTB
+GND --- GND
+
+
+PORTC
+PC0 -----
+PC1 -----
+PC2 ----- MID (POTETIOMETER)
+PC3 ----- (+) (BUZZER)
+PC4 ----- SDA (I2C LCD)
+PC5 ----- SCL (I2C LCD)
+ 
+ DHT11		BUZZER		   P.BUTTON
+ _____
+|_____|		(+___)			{ O }
+| | |		 |  |			 | |
+G D V		 P	G			 P G
+N A C		 C	N		     E N
+D T C		 3	D			 3 D
+A							 +
+							 10K OHM (RESISITOR GOES TO SOURCE)
+*/
 
 #define F_CPU 16000000 // frequency of the ATMEGA328PB microprocessor used
 #include <stdio.h> // standard library
@@ -7,19 +35,18 @@
 #include <stdio.h> // standard library
 #include <stdint.h> // standard library
 #include <stdlib.h> // standard library
-#include <string.h> // use for iota() function this will turn a integer to a string to be printed on LCD
-#include <stdbool.h> // not used its just a header file I need too learn
-#include "ADC.h" // header file to use Analog To Digital Converter (potentiometer)
+#include <string.h> // use for iota() function
+#include "ADC.h" // header file to use Analog To Digital Converter 
 #include "I2C.h" // header file to interface with I2C Protocol
 #include "DHT11.h" // header file interface with DHT11 Temperature and Humidity sensor
-#define Potentiometer 100.00 //the value of the potentiometer in resistance values higher then 10k can crash program (feel free to test it) //update this was long ago i should test this again
+#define Potentiometer 100.00 //the value of the potentiometer in resistance values higher can crash program
 
 int main()
 {
 	lcd_init(); //initialize LCD
 	char data[5];//define a char for itoa function
 	double TempSetPref; //
-	Init_ADC(); //initialize ADC	
+	Init_ADC();
 	while(1)
 	{////first while loop start
 		DDRE = ~(1<<3);
@@ -34,9 +61,10 @@ int main()
 		lcd_GoToXY(8,2); // position on LCD first column and second row
 		lcd_PrintString(data); // print value stores in char data		
 		_delay_ms(250); // wait
+		X = TempSetPref; //carry the value of TEMP (temperature set by user) in X
 			if (PINE != (1<<3)) // if button press is push begin if statement
 			{/// first if loop start
-				X = TempSetPref; //carry the value of TEMP (temperature set by user) in X
+				//X = TempSetPref; //carry the value of TEMP (temperature set by user) in X
 				_delay_ms(2000); // wait 
 				lcd_WriteCommand(0x01); // clear LCD
 				_delay_ms(500); // wait 
@@ -45,79 +73,86 @@ int main()
 				itoa(TempSetPref,data,10); // convert integer to string
 				lcd_GoToXY(0,1); // position on LCD first column and second row
 				lcd_PrintString(data); // char declaration to satisfy itoa function
-				_delay_ms(5000);
+				_delay_ms(1000);
 				lcd_WriteCommand(0x01);
-				_delay_ms(500);	
+				_delay_ms(500);
 		while(1) 
 		{ // second while statement
 		Request(); // too START DHT11 send start pulse in bits
 		Response(); // receive response in form of bits
-		Integer_Humidity=Receive_data(); // store first eight bit in I_RH
-		Decimal_Humidity=Receive_data(); // store next eight bit in D_RH
-		Integer_Temp=Receive_data(); // store next eight bit in I_Temp
-		Decimal_Temp=Receive_data(); // store next eight bit in D_Temp
+		I_RH=Receive_data(); // store first eight bit in I_RH
+		D_RH=Receive_data(); // store next eight bit in D_RH
+		I_Temp=Receive_data(); // store next eight bit in I_Temp
+		D_Temp=Receive_data(); // store next eight bit in D_Temp
 		CheckSum=Receive_data();// store next eight bit in CheckSum
-			if ((Integer_Humidity + Decimal_Humidity + Integer_Temp + Decimal_Temp) != CheckSum) // stole this for statement from on line probably not needed
+			if ((I_RH + D_RH + I_Temp + D_Temp) != CheckSum)
 			{ //third if statement
-				lcd_GoToXY(0,2);
+				lcd_GoToXY(0,0);
 				lcd_PrintString("Error");
 			} // third if statement end
-			else 
-			{ // first else statement
-				char DATA[5];// use to satisfie iota() function can call the charcter anything you like
+			else // first else statement
+			{
+				char data[5];// use to satisfie iota() function
+				I_Temp = (I_Temp);
 				lcd_init(); // Initialize LCD
 				lcd_GoToXY(1,1); // Enter column and row position
 				lcd_PrintString("Temp = ");
-				lcd_GoToXY(1,2); // (start of string display,line the string is displayed) values is backwards 
+				lcd_GoToXY(1,2);
 				lcd_PrintString("Humidity = ");
-				Integer_Temp = (Integer_Temp*1.8)+(32);
-				itoa(Integer_Humidity,DATA,10); // integer humidity display
+				//I_Temp = (I_Temp);
+				itoa(I_RH,data,10);
 				lcd_GoToXY(12,2);
-				lcd_PrintString(DATA);
+				lcd_PrintString(data);
 				lcd_PrintString(".");
-				itoa(Decimal_Humidity,DATA,10); // Decimal humidity display
-				lcd_PrintString(DATA);
+				// integer temperature display
+				itoa(D_RH,data,10);
+				lcd_PrintString(data);
 				lcd_PrintString("%");
-				itoa(Integer_Temp,DATA,10); // integer temperature display
+				// Decimal humidity display
+				itoa(I_Temp,data,10);
 				lcd_GoToXY(6,1);
-				lcd_PrintString(DATA);
+				lcd_PrintString(data);
 				lcd_PrintString(".");
-				itoa(Decimal_Temp,DATA,10); // decimal Temperature display
-				lcd_PrintString(DATA);
+				// Integer Temperature display
+				itoa(D_Temp,data,10);
+				lcd_PrintString(data);
 				lcd_WriteData(0xDF);
 				lcd_PrintString("F");
-				itoa(CheckSum,DATA,10); // Check sum display if deleted CheckSum for loop delete this too
-				lcd_GoToXY(0,1); // if deleted CheckSum for loop delete this too
-				lcd_PrintString(DATA); // if deleted CheckSum for loop delete this too
-				lcd_PrintString(" "); // if deleted CheckSum for loop delete this too 
-				_delay_ms(2000); // if deleted CheckSum for loop delete this too
+				// Check sum display
+				itoa(CheckSum,data,10);
+				lcd_GoToXY(13,1);
+				lcd_PrintString(data);
+				lcd_PrintString(" ");
+				_delay_ms(2000);
 				
-				if (Integer_Temp <= X) // if temperature set by user is equal or falls below preference this if statment will occur
-				{ // fourth if statment
+				if (I_Temp <= X)
+				{
 					_delay_ms(1000);
 					lcd_WriteCommand(0x01);
 					_delay_ms(1000);
 					lcd_GoToXY(0,2);
-					lcd_PrintString("THIS IS VERY BAD"); // WARNING statement
+					lcd_PrintString("THIS IS VERY BAD");
 					lcd_GoToXY(0,1);
-					lcd_PrintString("THIS IS VERY BAD"); // repetitive not needed
-					_delay_ms(1000);
-					lcd_WriteCommand(0x01);						
-					_delay_ms(5000); // doest need be such a long wait shorten the time
+					lcd_PrintString("THIS IS VERY BAD");
+					//_delay_ms(1000);
+					//lcd_WriteCommand(0x01);						
+					//_delay_ms(5000);
 					while(1)
-					{ // third while loop
-						DDRC = (1<<3); // make physical PINC a input
-						PORTC = (1<<3); // Turn ON the Buzzer connected to PORTC
-						_delay_us(100); // Wait time delay will effect the frequency of buzz
-						PORTC = ~(1<<3); // Turn OFF the Buzzer connected to PORTC
-						_delay_us(100); // Wait time delay will effect the frequency of buzz
-						continue; // continue buzzing until shut off
-					} // close 3rd while loop
-				}// close fourth if statement
+					{
+						lcd_GoToXY(0,2);
+						DDRC = (1<<3);
+						PORTC = (1<<3);     // Turn ON the Buzzer connected to PORTC
+						_delay_us(100);      // Wait time delay will effect the frequency of buzz
+						PORTC = ~(1<<3);       // Turn OFF the Buzzer connected to PORTC
+						_delay_us(100);      // Wait time delay will effect the frequency of buzz
+						continue;
+					}
+
+				}
 			continue;
-		 }//close second if statement
-		}//close third while statement
+		}//close second if statement
+		}//close second while statement
 		continue;	
-  } //close second while
- } //close first while
-} // end main fucntion
+  } //close 1st if while
+ } //close 1st while
+} // close main
