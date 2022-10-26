@@ -71,14 +71,14 @@ int main()
 				lcd_PrintString("Welcome To");
 				lcd_GoToXY(3,1); // position on LCD first column and first row (settings is backwards)
 				lcd_PrintString("ECE388 2022");
-				_delay_ms(3000);
+				_delay_ms(4000);
 								
 				lcd_WriteCommand(0x01);
 				lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
 				lcd_PrintString("Please Select");
 				lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
 				lcd_PrintString("High Temperature");
-				_delay_ms(3000);
+				_delay_ms(4000);
 				lcd_WriteCommand(0x01);
 				break;
 			}
@@ -111,7 +111,7 @@ if (PINE != (1<<3))
 				lcd_PrintString("Please Select");
 				lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
 				lcd_PrintString("Low Temperature");
-				_delay_ms(1000);
+				_delay_ms(4000);
 				lcd_WriteCommand(0x01); // CLEAR lcd for new message
 				break;
 			}
@@ -144,7 +144,7 @@ if (PINE != (1<<3))
 					lcd_PrintString("Please Select");
 					lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
 					lcd_PrintString("High Humidity");
-					_delay_ms(1000);
+					_delay_ms(3000);
 					lcd_WriteCommand(0x01);
 					break;
 				}
@@ -174,7 +174,7 @@ if (PINE != (1<<3))
 					lcd_PrintString("Please Select");
 					lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
 					lcd_PrintString("Low Humidity");
-					_delay_ms(1000);
+					_delay_ms(3000);
 					lcd_WriteCommand(0x01);
 					break;
 				}
@@ -208,15 +208,21 @@ if (PINE != (1<<3))
 	
 				lcd_WriteCommand(0x01); // clear LCD
 				lcd_GoToXY(0,2);
-				lcd_PrintString("Temperature ="); // confirm preferences
+				lcd_PrintString("Temp ="); // confirm preferences
 				itoa(X0,data,10); // convert integer to string
-				lcd_GoToXY(14,2); // position on LCD first column and second row
-				lcd_PrintString(data); // char declaration to satisfy itoa function		
-				lcd_GoToXY(0,1);
-				lcd_PrintString("Humidity ="); // confirm preferences
-				itoa(Y0,data,10); // convert integer to string
-				lcd_GoToXY(11,1); // position on LCD first column and second row
+				lcd_GoToXY(7,2); // position on LCD first column and second row
 				lcd_PrintString(data); // char declaration to satisfy itoa function
+				lcd_GoToXY(14,2); // position on LCD first column and first row (settings is backwards)
+				lcd_WriteData(0XDF);
+				lcd_GoToXY(15,2);
+				lcd_PrintString("F"); // confirm preferences		
+				lcd_GoToXY(0,1);
+				lcd_PrintString("Humid ="); // confirm preferences
+				itoa(Y0,data,10); // convert integer to string
+				lcd_GoToXY(8,1); // position on LCD first column and second row
+				lcd_PrintString(data); // char declaration to satisfy itoa function
+				lcd_GoToXY(113,2);
+				lcd_PrintString("%"); // confirm preferences
 				_delay_ms(2500); // wait 
 				
 				lcd_WriteCommand(0x01); // clear LCD
@@ -261,13 +267,13 @@ if (PINE != (1<<3))
 				char data[5];// use to satisfie iota() function
 				I_Temp = (I_Temp*1.8)+32;
 				lcd_init(); // Initialize LCD
-				lcd_GoToXY(1,1); // Enter column and row position
+				lcd_GoToXY(0,1); // Enter column and row position
 				lcd_PrintString("Temp = ");
-				lcd_GoToXY(1,2);
-				lcd_PrintString("Humidity = ");
+				lcd_GoToXY(0,2);
+				lcd_PrintString("Humid = ");
 				//I_Temp = (I_Temp);
 				itoa(I_RH,data,10);
-				lcd_GoToXY(12,2);
+				lcd_GoToXY(8,2);
 				lcd_PrintString(data);
 				lcd_PrintString(".");
 				// integer temperature display
@@ -276,7 +282,7 @@ if (PINE != (1<<3))
 				lcd_PrintString("%");
 				// Decimal humidity display
 				itoa(I_Temp,data,10);
-				lcd_GoToXY(6,1);
+				lcd_GoToXY(7,1);
 				lcd_PrintString(data);
 				lcd_PrintString(".");
 				// Integer Temperature display
