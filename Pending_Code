@@ -30,9 +30,9 @@ int main() // main function
 Hello:
 		lcd_WriteCommand(0x01); // clear display (LCD)
 		_delay_ms(100); // delay a set amount
-		lcd_GoToXY(3,2); // position on LCD first column and first row (settings is backwards)
+		lcd_GoToXY(2,2); // position on LCD first column and first row (settings is backwards)
 		lcd_PrintString("Welcome To"); // welcome message
-		lcd_GoToXY(3,1); // position on LCD first column and first row (settings is backwards)
+		lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
 		lcd_PrintString("ECE388 2022"); // personalize the display
 		_delay_ms(2500); // delay a set amount
 /*------------------------------------------------------------------------------------ SELECT HIGH TEMPETURE  ---------------------------------------------------------------------------------*/	
@@ -67,14 +67,18 @@ HIGH_T:
 		
 					if (PINE != (1<<3)) // open 1st if loop, if push button is pressed then true
 					{
-						_delay_ms(1500);
+						_delay_ms(1000);
 /*---------------------------------------- OPTION TOO RESET ----------------------------------------------------------------*/						
 					if (PINE != (1<<3))
 					{	
-						_delay_ms(1000);
+						lcd_WriteCommand(0x01); // clear display (LCD)
+						lcd_GoToXY(2,2); // position on LCD first column and first row (settings is backwards)
+						lcd_PrintString("Let go of Button"); // welcome message
+						lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
+						lcd_PrintString("To go Back"); // personalize the display
+						_delay_ms(4000);
 						if (PINE != (1<<3)) // inactive state the button is reading high
 					{
-						_delay_ms(2000);
 						lcd_WriteCommand(0x01); // CLEAR LCD for new message
 						lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
 						lcd_PrintString("RESETTING"); // instruct the user with a displayed message
@@ -138,43 +142,48 @@ LOW_T:
 				
 					if (PINE != (1<<3)) // open 1st if loop, if push button is pressed then true
 					{
-						_delay_ms(1500);
+						_delay_ms(1000);
 /*---------------------------------------- OPTION TOO RESET ----------------------------------------------------------------*/
 						if (PINE != (1<<3))
 						{
-							_delay_ms(1000);
-							if (PINE != (1<<3)) // inactive state the button is reading high
-							{
-								_delay_ms(2000);
-								lcd_WriteCommand(0x01); // CLEAR LCD for new message
-								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("RESETTING"); // instruct the user with a displayed message
-								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("PROGRAM..."); // instruct the user with a displayed message
-								_delay_ms(3000);
-								lcd_WriteCommand(0x01); // CLEAR LCD for new message
-								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("Please Don't"); // instruct the user with a displayed message
-								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("Hold the Button"); // instruct the user with a displayed message
-								_delay_ms(3000);
-								lcd_WriteCommand(0x01); // CLEAR LCD for new message
-								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("Please wait"); // instruct the user with a displayed message
-								_delay_ms(2500);
-								lcd_WriteCommand(0x01); // CLEAR LCD for new message
-								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("Reset Complete"); // instruct the user with a displayed message
-								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
-								lcd_PrintString("Thank You !"); // instruct the user with a displayed message
-								_delay_ms(2500);
-								lcd_WriteCommand(0x01); // clear display and reset program
-								PCMSK1 = (1<<5); //
-								PCICR = (1<<PCIE1); //
-								sei(); // set global interrupt high (i)
-							}
-							goto HIGH_T;
+							lcd_WriteCommand(0x01); // clear display (LCD)
+							lcd_GoToXY(2,2); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Let go of Button"); // welcome message
+							lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("To go Back"); // personalize the display
+							_delay_ms(4000);
+						if (PINE != (1<<3)) // inactive state the button is reading high
+						{
+							_delay_ms(2000);
+							lcd_WriteCommand(0x01); // CLEAR LCD for new message
+							lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("RESETTING"); // instruct the user with a displayed message
+							lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("PROGRAM..."); // instruct the user with a displayed message
+							_delay_ms(3000);
+							lcd_WriteCommand(0x01); // CLEAR LCD for new message
+							lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Please Don't"); // instruct the user with a displayed message
+							lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Hold the Button"); // instruct the user with a displayed message
+							_delay_ms(3000);
+							lcd_WriteCommand(0x01); // CLEAR LCD for new message
+							lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Please wait"); // instruct the user with a displayed message
+							_delay_ms(2500);
+							lcd_WriteCommand(0x01); // CLEAR LCD for new message
+							lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Reset Complete"); // instruct the user with a displayed message
+							lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+							lcd_PrintString("Thank You !"); // instruct the user with a displayed message
+							_delay_ms(2500);
+							lcd_WriteCommand(0x01); // clear display and reset program
+							PCMSK1 = (1<<5); //
+							PCICR = (1<<PCIE1); //
+							sei(); // set global interrupt high (i)
 						}
+						goto HIGH_T;
+					}
 /*---------------------------------------------------------------------- SELECT HIGH HUMIDITY  ---------------------------------------------------------------------------*/
 	while(1)
 	{ // open 5th while loop
@@ -207,11 +216,17 @@ HIGH_H:
 
 					if (PINE != (1<<3)) // open 1st if loop, if push button is pressed then true
 					{
-						_delay_ms(1500);
+						_delay_ms(1000);
 /*---------------------------------------- OPTION TOO RESET ----------------------------------------------------------------*/
 						if (PINE != (1<<3))
 						{
-							_delay_ms(1000);
+						lcd_WriteCommand(0x01); // clear display (LCD)
+						lcd_GoToXY(2,2); // position on LCD first column and first row (settings is backwards)
+						lcd_PrintString("Let go of Button"); // welcome message
+						lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
+						lcd_PrintString("To go Back"); // personalize the display
+						_delay_ms(4000);
+						if (PINE != (1<<3)) // inactive state the button is reading high
 							if (PINE != (1<<3)) // inactive state the button is reading high
 							{
 								_delay_ms(2000);
@@ -273,65 +288,108 @@ LOW_H:
 		lcd_PrintString(data); // print value stores in char data
 		Y1 = TempSetPref; //carry the value of TEMP (temperature set by user) in X
 /*----------------------------------------------------------------------- DISPLAY PREFERENCES  --------------------------------------------------------------------------*/			
-				if (PINE != (1<<3)) // if button press is push begin if statement // open 4th if loop
-				{
-					_delay_ms(550); // wait
-					lcd_WriteCommand(0x01); // clear LCD
+					if (PINE != (1<<3)) // open 1st if loop, if push button is pressed then true
+					{
+						_delay_ms(1000);
+						/*---------------------------------------- OPTION TOO RESET ----------------------------------------------------------------*/
+						if (PINE != (1<<3))
+						{
+								lcd_WriteCommand(0x01); // clear display (LCD)
+								lcd_GoToXY(2,2); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Let go of Button"); // welcome message
+								lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("To go Back"); // personalize the display
+								_delay_ms(4000);
+							if (PINE != (1<<3)) // inactive state the button is reading high
+							{
+								_delay_ms(2000);
+								lcd_WriteCommand(0x01); // CLEAR LCD for new message
+								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("RESETTING"); // instruct the user with a displayed message
+								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("PROGRAM..."); // instruct the user with a displayed message
+								_delay_ms(3000);
+								lcd_WriteCommand(0x01); // CLEAR LCD for new message
+								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Please Don't"); // instruct the user with a displayed message
+								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Hold the Button"); // instruct the user with a displayed message
+								_delay_ms(3000);
+								lcd_WriteCommand(0x01); // CLEAR LCD for new message
+								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Please wait"); // instruct the user with a displayed message
+								_delay_ms(2500);
+								lcd_WriteCommand(0x01); // CLEAR LCD for new message
+								lcd_GoToXY(0,2); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Reset Complete"); // instruct the user with a displayed message
+								lcd_GoToXY(0,1); // position on LCD first column and first row (settings is backwards)
+								lcd_PrintString("Thank You !"); // instruct the user with a displayed message
+								_delay_ms(2500);
+								lcd_WriteCommand(0x01); // clear display and reset program
+								PCMSK1 = (1<<5); //
+								PCICR = (1<<PCIE1); //
+								sei(); // set global interrupt high (i)
+							}
+							goto HIGH_H;
+						}							
+/*------------------------------------------------------------------------------------------------------------------------------------------------------*/				
+									_delay_ms(550); // wait
+									lcd_WriteCommand(0x01); // clear LCD
 									
-					lcd_GoToXY(0,2);
-					lcd_PrintString("Upper Limits"); // confirm preferences
-					lcd_GoToXY(0,1);
-					lcd_PrintString("are set too:"); // confirm preferences
-					_delay_ms(2500); // wait
+									lcd_GoToXY(0,2);
+									lcd_PrintString("Upper Limits"); // confirm preferences
+									lcd_GoToXY(0,1);
+									lcd_PrintString("are set too:"); // confirm preferences
+									_delay_ms(2500); // wait
 									
-					lcd_WriteCommand(0x01); // clear LCD
-					lcd_GoToXY(0,2);
-					lcd_PrintString("Temp ="); // confirm preferences
-					itoa(X0,data,10); // convert integer to string
-					lcd_GoToXY(7,2); // position on LCD first column and second row
-					lcd_PrintString(data); // char declaration to satisfy itoa function
-					lcd_GoToXY(9,2); // position on LCD first column and first row (settings is backwards)
-					lcd_WriteData(0XDF);
-					lcd_GoToXY(10,2);
-					lcd_PrintString("F"); // confirm preferences
-					lcd_GoToXY(0,1);
-					lcd_PrintString("Humid ="); // confirm preferences
-					itoa(Y0,data,10); // convert integer to string
-					lcd_GoToXY(8,1); // position on LCD first column and second row
-					lcd_PrintString(data); // char declaration to satisfy itoa function
-					lcd_GoToXY(11,1);
-					lcd_PrintString("%"); // confirm preferences
-					_delay_ms(3000); // wait
+									lcd_WriteCommand(0x01); // clear LCD
+									lcd_GoToXY(0,2);
+									lcd_PrintString("Temp ="); // confirm preferences
+									itoa(X0,data,10); // convert integer to string
+									lcd_GoToXY(7,2); // position on LCD first column and second row
+									lcd_PrintString(data); // char declaration to satisfy itoa function
+									lcd_GoToXY(9,2); // position on LCD first column and first row (settings is backwards)
+									lcd_WriteData(0XDF);
+									lcd_GoToXY(10,2);
+									lcd_PrintString("F"); // confirm preferences
+									lcd_GoToXY(0,1);
+									lcd_PrintString("Humid ="); // confirm preferences
+									itoa(Y0,data,10); // convert integer to string
+									lcd_GoToXY(8,1); // position on LCD first column and second row
+									lcd_PrintString(data); // char declaration to satisfy itoa function
+									lcd_GoToXY(11,1);
+									lcd_PrintString("%"); // confirm preferences
+									_delay_ms(3000); // wait
 									
-					lcd_WriteCommand(0x01); // clear LCD
-					lcd_GoToXY(0,2);
-					lcd_PrintString("Lower Limits"); // confirm preferences
-					lcd_GoToXY(0,1);
-					lcd_PrintString("are set too:"); // confirm preferences
-					_delay_ms(2500); // wait
+									lcd_WriteCommand(0x01); // clear LCD
+									lcd_GoToXY(0,2);
+									lcd_PrintString("Lower Limits"); // confirm preferences
+									lcd_GoToXY(0,1);
+									lcd_PrintString("are set too:"); // confirm preferences
+									_delay_ms(2500); // wait
 									
-					lcd_WriteCommand(0x01); // clear LCD
-					lcd_GoToXY(0,2);
-					lcd_PrintString("Temp ="); // confirm preferences
-					itoa(X1,data,10); // convert integer to string
-					lcd_GoToXY(7,2); // position on LCD first column and second row
-					lcd_PrintString(data); // char declaration to satisfy itoa function
-					lcd_GoToXY(9,2); // position on LCD first column and first row (settings is backwards)
-					lcd_WriteData(0XDF);
-					lcd_GoToXY(10,2);
-					lcd_PrintString("F"); // confirm preferences
-					lcd_GoToXY(0,1);
-					lcd_PrintString("Humid ="); // confirm preferences
-					itoa(Y1,data,10); // convert integer to string
-					lcd_GoToXY(8,1); // position on LCD first column and second row
-					lcd_PrintString(data); // char declaration to satisfy itoa function
-					lcd_GoToXY(11,1);
-					lcd_PrintString("%"); // confirm preferences
-					_delay_ms(3000); // wait
+									lcd_WriteCommand(0x01); // clear LCD
+									lcd_GoToXY(0,2);
+									lcd_PrintString("Temp ="); // confirm preferences
+									itoa(X1,data,10); // convert integer to string
+									lcd_GoToXY(7,2); // position on LCD first column and second row
+									lcd_PrintString(data); // char declaration to satisfy itoa function
+									lcd_GoToXY(9,2); // position on LCD first column and first row (settings is backwards)
+									lcd_WriteData(0XDF);
+									lcd_GoToXY(10,2);
+									lcd_PrintString("F"); // confirm preferences
+									lcd_GoToXY(0,1);
+									lcd_PrintString("Humid ="); // confirm preferences
+									itoa(Y1,data,10); // convert integer to string
+									lcd_GoToXY(8,1); // position on LCD first column and second row
+									lcd_PrintString(data); // char declaration to satisfy itoa function
+									lcd_GoToXY(11,1);
+									lcd_PrintString("%"); // confirm preferences
+									_delay_ms(3000); // wait
 									
-					_delay_ms(2000);
-					lcd_WriteCommand(0x01);
-					_delay_ms(500);
+									_delay_ms(2000);
+									lcd_WriteCommand(0x01);
+									_delay_ms(500);
 
 	while(1) // open 9th while loop
 	{
@@ -384,7 +442,7 @@ LOW_H:
 			lcd_PrintString(" ");
 			_delay_ms(500);
 											
-		if (PINE != (1<<3)) // inactive state the button is reading high
+		/*if (PINE != (1<<3)) // inactive state the button is reading high
 		{
 			_delay_ms(2000);
 			if (PINE != (1<<3))
@@ -395,7 +453,7 @@ LOW_H:
 				sei(); // set global interrupt high (i)
 			}
 			break;
-		}
+		}*/
 		
 		if (I_RH > Y0 && I_Temp < X0)
 		{
