@@ -1,0 +1,85 @@
+void EEPROM_CLEAR(void)
+ {
+	 lcd_init();
+	 int P = 1;
+	 char str[] = ".", str1[] = "*";
+	 sprintf(str1,"*",P);
+	 eeprom_busy_wait();
+	 for(int j = 0; j < 100 ; j++)
+	 {
+		 eeprom_read_block(str,j,strlen(str));
+		 if (strcmp(str,".")==0)
+		 {
+			 goto end;
+		 }
+		 else if(j >= 99 && strcmp(str,".")!=0)
+		 {
+			 for(int k = 0; k < 112; k++)
+			 {
+				 eeprom_write_block(str1,k,strlen(str1));
+			 }
+			 sprintf(str1,".",P);
+			 eeprom_write_block(str1,0,strlen(str1));
+			 goto end;
+		 }
+	 }
+	 end:
+	 return;
+ }
+ 
+ 
+   long int eeprom_save_pref(long int *i, long int *j, long int *k, long int *y)
+  {
+	char str[] = "d";
+	char* endPtr;
+	eeprom_busy_wait();
+	sprintf(str,"%d",i);
+	eeprom_update_block(str,512,2);
+	sprintf(str,"%d",j);
+	eeprom_update_block(str,514,2);
+	sprintf(str,"%d",k);
+	eeprom_update_block(str,516,2);
+	sprintf(str,"%d",y);
+	eeprom_update_block(str,518,2);
+	eeprom_read_block(str,513,2);
+	*i = strtol(str,&endPtr,10);
+	eeprom_read_block(str,515,2);
+	*j = strtol(str,&endPtr,10);
+	eeprom_read_block(str,517,2);
+	*k = strtol(str,&endPtr,10);
+	eeprom_read_block(str,519,2);
+	*y = strtol(str,&endPtr,10);
+	return;
+  }
+ 
+void eeprom_store_preff(int i, int j, int k, int y)
+   {
+	char str[] = "d";
+	//char* endPtr;
+	sprintf(str,"%d",i);
+	eeprom_busy_wait();
+	eeprom_update_block(str,512,2);
+	sprintf(str,"%d",j);
+	eeprom_update_block(str,514,2);
+	sprintf(str,"%d",k);
+	eeprom_update_block(str,516,2);
+	sprintf(str,"%d",y);
+	eeprom_update_block(str,518,2);
+return;
+   }
+   
+int eeprom_pref_saved(int *x0, int *x1, int *y0, int *y1)
+{
+char str[] = " ";
+char* endPnt;
+eeprom_busy_wait();
+eeprom_read_block(str,512,2);
+*x0 = strtol(str,*endPnt,10);
+eeprom_read_block(str,514,2);
+*x1 = strtol(str,*endPnt,10);
+eeprom_read_block(str,516,2);
+*y0 = strtol(str,*endPnt,10);
+eeprom_read_block(str,518,2);
+*y1 = strtol(str,*endPnt,10);
+return;	
+}
