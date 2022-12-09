@@ -68,6 +68,7 @@ ISR(PCINT0_vect) // PCINT0 = PORTB
 /*---------- START MAIN (HELLO) ----------*/
 int main() // main function
 {
+	DDRE = ~(1<<3);
 	EEPROM_CLEAR();
 	char string[7];
 	DDRC |= (1<<3); // Set the DDRC Pin 3 High to be an output
@@ -91,7 +92,32 @@ int main() // main function
 		lcd_GoToXY(2,1); // position on LCD first column and first row (settings is backwards)
 		lcd_PrintString("ECE388 2022"); // personalize the display
 		_delay_ms(2500); // delay a set amount 2.5 Seconds
+		lcd_WriteCommand(0x01);
 /*---------- END MAIN (HELLO WORLD) ----------*/
+while(1)
+{
+	TempSetPref=(double)Potentiometer/1024*ReadADC_0(0); //reading Potentiometer value in Ohms
+	lcd_GoToXY(0,2);
+	lcd_PrintString("Use Saved Data?");
+	if(TempSetPref > 50)
+	{
+			lcd_GoToXY(0,1);
+			lcd_PrintString("Yes");
+			if (PINE != (1<<3))
+			{
+				goto pref;
+			}
+	}
+	else if(TempSetPref < 50)
+	{
+			lcd_GoToXY(0,1);
+			lcd_PrintString("No!");
+			if (PINE != (1<<3))
+			{
+				goto HIGH_T;
+			}
+	}
+}
 /*---------- START HIGH TEMPERATURE ----------*/	
 		HIGH_T:	//This is a goto to set High Temperature
 		lcd_WriteCommand(0x01); // clear the LCD
