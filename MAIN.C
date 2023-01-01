@@ -1,8 +1,8 @@
 /*
- * 4x4KeyPad.c
+ * ECE388_Project.c
  *
  * Created: 9/16/2022 9:48:11 PM
- * Author : curti
+ * Author : curtis
  */ 
 /*
 Summary:
@@ -20,14 +20,14 @@ Sensors:
 (This only includes sensors interfaced with with code)
 
  DHT11		BUZZER		PUSH BUTTON						POTETIOMETER
- _____													 _____
-|_____|		(+___)		{ O }							(_____)
- | | |		 |  |		 | |							 | | |
- G D V		 P  G		 P G							 | | |
- N A C		 C  N		 E N							 G P V	
- D T C		 3  D		 3 D							 N C C
- A						 +									   	 D 0 C
-						 10K OHM (RESISITOR GOES TO SOURCE) 
+ _____											           _____
+|_____|		(+___)		{ O }					 (_____)
+ | | |		  |  |		  | |							 | | |
+ G D V		  P  G		  P G							 | | |
+ N A C		  C  N		  E N							 G P V	
+ D T C		  3  D		  3 D							 N C C
+ A						  +									   	     D 0 C
+						    10K OHM (RESISITOR GOES TO SOURCE) 
 ATMEGA328PB:
 --PORTB-- (NO CODING TO THIS REGISTERS)
 --PORTC--
